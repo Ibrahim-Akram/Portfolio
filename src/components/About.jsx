@@ -150,14 +150,15 @@ const About = () => {
                 <span className="text-white font-bold drop-shadow">
                   {" "}Mohamed Ibrahim Akram
                 </span>
-                , completed B.E in Computer Science at Anna University.
+                , holds a Bachelor of Engineering (B.E.) in Computer Science from Anna University.
 
               </p>
 
 
               <p className="text-sm md:text-base text-white/60 font-light leading-relaxed">
 
-                My technical narrative bridges rigorous algorithmic problem-solving with full-stack software architecture, translating complex backend logic into seamless, high-performance interfaces.
+                My technical expertise combines strong algorithmic problem-solving with full-stack e-commerce architecture, transforming complex requirements into scalable, high-performance, and intuitive digital experiences.
+
 
               </p>
 
