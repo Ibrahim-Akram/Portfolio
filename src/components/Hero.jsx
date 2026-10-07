@@ -202,7 +202,7 @@ const Hero = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen bg-[#050505] overflow-hidden flex flex-col justify-between select-none cursor-none"
+      className="relative w-full min-h-screen lg:h-screen bg-[#050505] overflow-hidden flex flex-col justify-between select-none cursor-none"
     >
 
       <style>{`
@@ -257,7 +257,7 @@ const Hero = () => {
       {/* 3. Main Content Layer */}
       <div
         ref={contentRef}
-        className="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col justify-between pt-24 pb-12"
+        className="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 min-h-full lg:h-full flex flex-col justify-between pt-24 pb-12 gap-10 lg:gap-0"
       >
 
         {/* Top Developer Badge */}
