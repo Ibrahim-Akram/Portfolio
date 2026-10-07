@@ -79,8 +79,11 @@ const Projects = () => {
   const cardsRef = useRef([]);
   const mobileCardsRef = useRef([]);
   const mobileCarouselRef = useRef(null);
+  const activeIndexRef = useRef(0);
 
   useEffect(() => {
+    let cleanupActiveCardScroll = null;
+
     let ctx = gsap.context(() => {
 
       // Set initial origins
@@ -324,13 +327,107 @@ const Projects = () => {
 
                 onComplete: () => {
 
-                  if (mobileCarouselRef.current) {
+                  const carousel = mobileCarouselRef.current;
 
-                    mobileCarouselRef.current.style.overflowX =
-                      'auto';
+                  if (carousel) {
 
-                    mobileCarouselRef.current.style.pointerEvents =
-                      'auto';
+                    carousel.style.overflowX = 'auto';
+                    carousel.style.pointerEvents = 'auto';
+
+                    let rafId = null;
+
+                    const updateActiveCard = () => {
+                      const carouselRect = carousel.getBoundingClientRect();
+                      const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+                      let closestIndex = 0;
+                      let closestDistance = Infinity;
+
+                      mobileCardsRef.current.forEach((card, idx) => {
+                        if (!card) return;
+
+                        const rect = card.getBoundingClientRect();
+                        const cardCenter = rect.left + rect.width / 2;
+                        const distance = Math.abs(cardCenter - carouselCenter);
+
+                        if (distance < closestDistance) {
+                          closestDistance = distance;
+                          closestIndex = idx;
+                        }
+                      });
+
+                      activeIndexRef.current = closestIndex;
+
+                      mobileCardsRef.current.forEach((card, idx) => {
+                        if (!card) return;
+
+                        gsap.to(card, {
+                          scale: idx === closestIndex ? 1 : 0.92,
+                          opacity: idx === closestIndex ? 1 : 0.5,
+                          duration: 0.3,
+                          ease: "power2.out",
+                          overwrite: "auto"
+                        });
+                      });
+                    };
+
+                    const handleScroll = () => {
+                      if (rafId) cancelAnimationFrame(rafId);
+                      rafId = requestAnimationFrame(updateActiveCard);
+                    };
+
+                    carousel.addEventListener('scroll', handleScroll, { passive: true });
+
+                    // Autoplay: advance to the next card on a timer
+                    let autoplayId = null;
+                    let resumeTimeoutId = null;
+
+                    const goToNext = () => {
+                      const total = mobileCardsRef.current.length;
+                      const nextIndex = (activeIndexRef.current + 1) % total;
+                      const nextCard = mobileCardsRef.current[nextIndex];
+
+                      if (nextCard) {
+                        const targetLeft =
+                          nextCard.offsetLeft -
+                          (carousel.offsetWidth - nextCard.offsetWidth) / 2;
+
+                        carousel.scrollTo({
+                          left: targetLeft,
+                          behavior: 'smooth'
+                        });
+                      }
+                    };
+
+                    const startAutoplay = () => {
+                      stopAutoplay();
+                      autoplayId = setInterval(goToNext, 3500);
+                    };
+
+                    const stopAutoplay = () => {
+                      if (autoplayId) clearInterval(autoplayId);
+                      autoplayId = null;
+                    };
+
+                    const pauseThenResume = () => {
+                      stopAutoplay();
+                      if (resumeTimeoutId) clearTimeout(resumeTimeoutId);
+                      resumeTimeoutId = setTimeout(startAutoplay, 4500);
+                    };
+
+                    carousel.addEventListener('touchstart', pauseThenResume, { passive: true });
+                    carousel.addEventListener('pointerdown', pauseThenResume, { passive: true });
+
+                    startAutoplay();
+
+                    cleanupActiveCardScroll = () => {
+                      carousel.removeEventListener('scroll', handleScroll);
+                      carousel.removeEventListener('touchstart', pauseThenResume);
+                      carousel.removeEventListener('pointerdown', pauseThenResume);
+                      if (rafId) cancelAnimationFrame(rafId);
+                      stopAutoplay();
+                      if (resumeTimeoutId) clearTimeout(resumeTimeoutId);
+                    };
 
                   }
 
@@ -344,7 +441,10 @@ const Projects = () => {
 
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      if (cleanupActiveCardScroll) cleanupActiveCardScroll();
+    };
 
   }, []);
 
@@ -353,8 +453,16 @@ const Projects = () => {
     <section
       id="projects"
       ref={containerRef}
-      className="bg-[#0b0b0b] min-h-[100svh] md:min-h-[170vh] relative font-sans overflow-x-clip text-white w-full flex items-center justify-center py-24 md:py-40 select-none"
+      className="bg-[#0b0b0b] min-h-[100svh] md:min-h-[170vh] relative font-sans overflow-x-clip text-white w-full flex items-center justify-center py-12 md:py-40 select-none"
     >
+
+      {/* Episode Badge */}
+      <div className="absolute top-6 md:top-10 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-2 px-3 py-1 rounded bg-black/80 backdrop-blur-xl border border-[#71ff64]/40 text-[11px] font-mono uppercase tracking-widest text-white shadow-xl">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#71ff64] animate-ping"></span>
+        <span className="text-[#71ff64] font-bold">EPISODE 03</span>
+        <span className="text-white/40">|</span>
+        <span>FEATURED PROJECTS</span>
+      </div>
 
       {/* Background Cinematic Title Watermark */}
       <div className="absolute top-10 left-0 w-full flex items-start justify-center pointer-events-none z-0">

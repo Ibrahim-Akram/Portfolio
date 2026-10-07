@@ -54,6 +54,8 @@ const Skills = () => {
   const cardsRef = useRef([]);
   const bgRefs = useRef([]);
   const textRefs = useRef([]);
+  const carouselRef = useRef(null);
+  const activeIndexRef = useRef(0);
 
   const handleScroll = (e) => {
     if (window.innerWidth >= 769) return;
@@ -78,6 +80,8 @@ const Skills = () => {
         activeIdx = i;
       }
     });
+
+    activeIndexRef.current = activeIdx;
 
     cardsRef.current.forEach((card, i) => {
       if (card) {
@@ -112,6 +116,8 @@ const Skills = () => {
   };
 
   useLayoutEffect(() => {
+    let cleanupAutoplay = null;
+
     let ctx = gsap.context(() => {
 
       let mm = gsap.matchMedia();
@@ -259,11 +265,69 @@ const Skills = () => {
 
         });
 
+        // Autoplay: advance to the next skill card on a timer
+        const carousel = carouselRef.current;
+
+        if (carousel) {
+
+          let autoplayId = null;
+          let resumeTimeoutId = null;
+
+          const goToNext = () => {
+            const total = cardsRef.current.length;
+            const nextIndex = (activeIndexRef.current + 1) % total;
+            const nextCard = cardsRef.current[nextIndex];
+
+            if (nextCard) {
+              const targetLeft =
+                nextCard.offsetLeft -
+                (carousel.offsetWidth - nextCard.offsetWidth) / 2;
+
+              carousel.scrollTo({
+                left: targetLeft,
+                behavior: 'smooth'
+              });
+            }
+          };
+
+          const startAutoplay = () => {
+            stopAutoplay();
+            autoplayId = setInterval(goToNext, 3500);
+          };
+
+          const stopAutoplay = () => {
+            if (autoplayId) clearInterval(autoplayId);
+            autoplayId = null;
+          };
+
+          const pauseThenResume = () => {
+            stopAutoplay();
+            if (resumeTimeoutId) clearTimeout(resumeTimeoutId);
+            resumeTimeoutId = setTimeout(startAutoplay, 4500);
+          };
+
+          carousel.addEventListener('touchstart', pauseThenResume, { passive: true });
+          carousel.addEventListener('pointerdown', pauseThenResume, { passive: true });
+
+          startAutoplay();
+
+          cleanupAutoplay = () => {
+            carousel.removeEventListener('touchstart', pauseThenResume);
+            carousel.removeEventListener('pointerdown', pauseThenResume);
+            stopAutoplay();
+            if (resumeTimeoutId) clearTimeout(resumeTimeoutId);
+          };
+
+        }
+
       });
 
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      if (cleanupAutoplay) cleanupAutoplay();
+    };
 
   }, []);
 
@@ -274,6 +338,14 @@ const Skills = () => {
       ref={sectionRef}
       className="relative w-full h-screen bg-[#0b0b0b] text-white overflow-hidden flex items-center justify-center md:[perspective:1000px] select-none"
     >
+
+      {/* Episode Badge */}
+      <div className="absolute top-6 md:top-10 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-2 px-3 py-1 rounded bg-black/80 backdrop-blur-xl border border-[#71ff64]/40 text-[11px] font-mono uppercase tracking-widest text-white shadow-xl">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#71ff64] animate-ping"></span>
+        <span className="text-[#71ff64] font-bold">EPISODE 03</span>
+        <span className="text-white/40">|</span>
+        <span>SKILL MATRIX</span>
+      </div>
 
       {/* Dynamic Green Dark Background Vignettes */}
       {skillCategories.map((_, i) => (
@@ -316,6 +388,7 @@ const Skills = () => {
 
       {/* Carousel Container */}
       <div
+        ref={carouselRef}
         className="relative w-full h-full flex md:items-center md:justify-center z-10 md:[transform-style:preserve-3d] overflow-x-auto overflow-y-hidden md:overflow-visible snap-x snap-mandatory scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] items-center px-[10vw] md:px-0 gap-4 md:gap-0 touch-pan-x"
         onScroll={handleScroll}
       >

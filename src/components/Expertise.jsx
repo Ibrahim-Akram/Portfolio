@@ -95,7 +95,7 @@ const Expertise = () => {
     <section
       id="expertise"
       ref={containerRef}
-      className="relative w-full bg-[#050505] text-white py-20 px-6 md:px-12 select-none overflow-hidden"
+      className="relative w-full bg-[#050505] text-white py-12 md:py-20 px-6 md:px-12 select-none overflow-hidden"
     >
       {/* Green Ambient Glow */}
       <div className="absolute top-1/3 left-1/4 w-[450px] h-[450px] bg-[#71ff64]/10 rounded-full blur-[140px] pointer-events-none"></div>
@@ -138,7 +138,7 @@ const Expertise = () => {
         </div>
 
         {/* Compact 1-on-1 Gradient Stacking Container */}
-        <div className="relative flex flex-col gap-8 pb-20">
+        <div className="relative flex flex-col gap-8 pb-8 md:pb-20">
 
           {expertiseData.map((item, index) => (
 

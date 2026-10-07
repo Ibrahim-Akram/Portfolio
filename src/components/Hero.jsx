@@ -306,18 +306,18 @@ const Hero = () => {
               </span>
 
               <span className="text-white/80 text-xs font-mono tracking-widest uppercase">
-                Software Engineer & Problem Solver
+                Software Engineer | Full Stack Developer | eCommerce Specialist
               </span>
 
             </div>
 
             <h1 className="hero-anim-item text-5xl md:text-7xl font-black tracking-tighter text-white leading-[0.95] drop-shadow-[0_15px_30px_rgba(0,0,0,0.9)]">
 
-              IBRAHIM
+              IBRAHIM AKRAM
               <br />
 
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#71ff64] via-[#71ff64] to-[#5ee653] drop-shadow-[0_0_35px_rgba(113,255,100,0.5)]">
-                DEV.ENGINE
+                WEB.ENGINEER
               </span>
 
             </h1>
@@ -331,19 +331,19 @@ const Hero = () => {
               <span className="text-white/40">•</span>
 
               <span>
-                React • Node.js • PostgreSQL
+                React • Next.js • Node.js • PostgreSQL
               </span>
 
               <span className="text-white/40">•</span>
 
               <span className="text-white/70">
-                Docker & Cloud
+                Shopify Plus • Shopify Hydrogen • WooCommerce
               </span>
 
             </div>
 
             <p className="hero-anim-item text-sm md:text-base text-white/80 font-light leading-relaxed max-w-md drop-shadow">
-              Architecting robust full-stack systems, building scalable multi-tenant SaaS platforms, and engineering cutting-edge AI integrations.
+              Architecting robust full-stack systems, building scalable multi-tenant E-Commerce platforms, and engineering cutting-edge AI integrations.
             </p>
 
             {/* Action Button Set */}
