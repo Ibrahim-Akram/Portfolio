@@ -14,7 +14,7 @@ const Footer = () => {
             </div>
 
             <p className="text-xs font-mono text-white/50 tracking-widest uppercase">
-              // NETFLIX DEVELOPER SERIES &bull; SEASON 2026
+              // E-COMMERCE DEVELOPER SERIES &bull; SEASON 2026
             </p>
           </div>
 
